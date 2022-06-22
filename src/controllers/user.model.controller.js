@@ -22,8 +22,8 @@ router.get("",async(req,res)=>{
 router.post("",async(req,res)=>{
     try {
          const user= await User.create(req.body);
-         const users= await User.find().lean().exec();
-        
+         const users= await User.find({_id:req.body._id}).lean().exec();
+        //  console.log(users)
          const flattened= myFlatten(users[0])
             
         return res.status(201).send(flattened)
