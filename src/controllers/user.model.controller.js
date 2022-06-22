@@ -15,12 +15,29 @@ router.get("",async(req,res)=>{
 router.post("",async(req,res)=>{
     try {
          const user= await User.create(req.body);
-         return res.status(201).send(user)
+         const users= await User.find().lean().exec();
+        
+         const flattened= myFlatten(users[0])
+            
+        return res.status(201).send(flattened)
     } catch (error) {
        return  res.status(500).send({message:error.message})
     }
 })
 
+// custome function to flatten json object
+const myFlatten = (obj = {}, res = {}, extraKey = '') => {
+    for(key in obj){
+       if(typeof obj[key] !== 'object'){
+          res[extraKey + key] = capitalize(typeof obj[key]);
+       }else{
+        myFlatten(obj[key], res, `${extraKey}${key}.`);
+       };
+    };
+    return res;
+ };
+ // function to capitalize first letter
+ const capitalize = str => str.split(' ').map(sub => sub.charAt(0).toUpperCase() + sub.slice(1)).join(' ');
 
 
 
